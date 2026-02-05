@@ -2,7 +2,11 @@
 
 Chrome extension that rewrites import paths when you copy shadcn-style component snippets.
 
+> Motivation: Needed it for viewing docs on shadcn, becuase I use a different path alias :D
+
 Works on a few hardcoded docs sites. You edit simple **Find → Replace** rules.
+
+> Motivation: I liked `@/components/ui` but shadcn uses `~/`
 
 ## Install
 

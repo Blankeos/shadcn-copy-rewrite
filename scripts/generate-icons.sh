@@ -17,6 +17,7 @@ fi
 mkdir -p "$output_dir"
 
 sips -Z 16 "$input_path" --out "$output_dir/icon-16.png"
+sips -Z 24 "$input_path" --out "$output_dir/icon-24.png"
 sips -Z 32 "$input_path" --out "$output_dir/icon-32.png"
 sips -Z 48 "$input_path" --out "$output_dir/icon-48.png"
 sips -Z 128 "$input_path" --out "$output_dir/icon-128.png"

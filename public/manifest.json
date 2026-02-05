@@ -6,6 +6,7 @@
   "homepage_url": "https://github.com/blankeos/shadcn-copy-extension",
   "icons": {
     "16": "icon-16.png",
+    "24": "icon-24.png",
     "32": "icon-32.png",
     "48": "icon-48.png",
     "128": "icon-128.png"
@@ -15,9 +16,8 @@
     "default_popup": "index.html",
     "default_icon": {
       "16": "icon-16.png",
-      "32": "icon-32.png",
-      "48": "icon-48.png",
-      "128": "icon-128.png"
+      "24": "icon-24.png",
+      "32": "icon-32.png"
     }
   },
   "permissions": ["storage"],

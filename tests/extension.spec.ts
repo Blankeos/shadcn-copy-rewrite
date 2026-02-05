@@ -145,88 +145,90 @@ test.describe.serial("extension", () => {
   test("rewrites accordion code copy on supported sites", async ({ sharedPage, sharedContext, isHeaded }) => {
     test.setTimeout(180000);
     for (const targetUrl of accordionTargets) {
-      console.log(`Visiting ${targetUrl}`);
-      const targetOrigin = new URL(targetUrl).origin;
-      await sharedContext.grantPermissions(["clipboard-read", "clipboard-write"], {
-        origin: targetOrigin
-      });
+      await test.step(`accordion rewrite: ${targetUrl}`, async () => {
+        console.log(`Visiting ${targetUrl}`);
+        const targetOrigin = new URL(targetUrl).origin;
+        await sharedContext.grantPermissions(["clipboard-read", "clipboard-write"], {
+          origin: targetOrigin
+        });
 
-      await sharedPage.goto(targetUrl, { waitUntil: "domcontentloaded", timeout: 30000 });
+        await sharedPage.goto(targetUrl, { waitUntil: "domcontentloaded", timeout: 30000 });
 
-      const codeToggle = sharedPage
-        .getByRole("tab", { name: /^code$/i })
-        .or(sharedPage.getByRole("button", { name: /^code$/i }))
-        .or(sharedPage.getByRole("link", { name: /^code$/i }))
-        .or(sharedPage.getByRole("button", { name: /^view code$/i }))
-        .or(sharedPage.getByRole("link", { name: /^view code$/i }));
-      if ((await codeToggle.count()) > 0) {
-        await codeToggle.first().click({ noWaitAfter: true });
-      }
-
-      const codeBlocks = sharedPage
-        .locator("pre")
-        .filter({ hasText: /accordion/i })
-        .filter({ hasText: /components/i });
-      await expect
-        .poll(async () => await codeBlocks.count(), { timeout: 15000 })
-        .toBeGreaterThan(0);
-
-      const codeBlockCount = await codeBlocks.count();
-      let codeBlock: Locator | null = null;
-      for (let i = 0; i < codeBlockCount; i += 1) {
-        const candidate = codeBlocks.nth(i);
-        if (await candidate.isVisible()) {
-          codeBlock = candidate;
-          break;
+        const codeToggle = sharedPage
+          .getByRole("tab", { name: /^code$/i })
+          .or(sharedPage.getByRole("button", { name: /^code$/i }))
+          .or(sharedPage.getByRole("link", { name: /^code$/i }))
+          .or(sharedPage.getByRole("button", { name: /^view code$/i }))
+          .or(sharedPage.getByRole("link", { name: /^view code$/i }));
+        if ((await codeToggle.count()) > 0) {
+          await codeToggle.first().click({ noWaitAfter: true });
         }
-      }
 
-      if (!codeBlock) {
-        throw new Error(`No visible accordion code block found on ${targetUrl}.`);
-      }
+        const codeBlocks = sharedPage
+          .locator("pre")
+          .filter({ hasText: /accordion/i })
+          .filter({ hasText: /components/i });
+        await expect
+          .poll(async () => await codeBlocks.count(), { timeout: 15000 })
+          .toBeGreaterThan(0);
 
-      const expectedLine = await getExpectedImportLine(codeBlock);
-      const copyButton = await findCopyButtonForCodeBlock(codeBlock);
+        const codeBlockCount = await codeBlocks.count();
+        let codeBlock: Locator | null = null;
+        for (let i = 0; i < codeBlockCount; i += 1) {
+          const candidate = codeBlocks.nth(i);
+          if (await candidate.isVisible()) {
+            codeBlock = candidate;
+            break;
+          }
+        }
 
-      await expect
-        .poll(
-          async () =>
-            await sharedPage.evaluate(
-              () => document.documentElement.getAttribute("data-shadcn-copy-rewrite")
-            ),
-          { timeout: 15000 }
-        )
-        .toBe("loaded");
+        if (!codeBlock) {
+          throw new Error(`No visible accordion code block found on ${targetUrl}.`);
+        }
 
-      if (!copyButton || clipboardOptionalOrigins.has(targetOrigin)) {
-        await expectAccordionRewrite(codeBlock, expectedLine);
-        continue;
-      }
+        const expectedLine = await getExpectedImportLine(codeBlock);
+        const copyButton = await findCopyButtonForCodeBlock(codeBlock);
 
-      await sharedPage.bringToFront();
-      await sharedPage.focus("body");
-      await sharedPage.evaluate((button) => {
-        button.scrollIntoView?.({ block: "center", inline: "center" });
-        button.click();
-      }, copyButton);
+        await expect
+          .poll(
+            async () =>
+              await sharedPage.evaluate(
+                () => document.documentElement.getAttribute("data-shadcn-copy-rewrite")
+              ),
+            { timeout: 15000 }
+          )
+          .toBe("loaded");
 
-      if (!isHeaded) {
-        await expectAccordionRewrite(codeBlock, expectedLine);
-        continue;
-      }
+        if (!copyButton || clipboardOptionalOrigins.has(targetOrigin)) {
+          await expectAccordionRewrite(codeBlock, expectedLine);
+          return;
+        }
 
-      await expect
-        .poll(
-          async () => {
-            try {
-              return await sharedPage.evaluate(() => navigator.clipboard.readText());
-            } catch {
-              return "";
-            }
-          },
-          { timeout: 15000 }
-        )
-        .toContain(expectedLine);
+        await sharedPage.bringToFront();
+        await sharedPage.focus("body");
+        await sharedPage.evaluate((button) => {
+          button.scrollIntoView?.({ block: "center", inline: "center" });
+          button.click();
+        }, copyButton);
+
+        if (!isHeaded) {
+          await expectAccordionRewrite(codeBlock, expectedLine);
+          return;
+        }
+
+        await expect
+          .poll(
+            async () => {
+              try {
+                return await sharedPage.evaluate(() => navigator.clipboard.readText());
+              } catch {
+                return "";
+              }
+            },
+            { timeout: 15000 }
+          )
+          .toContain(expectedLine);
+      });
     }
 
     if (isHeaded) {

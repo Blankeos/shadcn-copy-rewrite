@@ -1,7 +1,7 @@
 {
   "name": "shadcn-copy-extension",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "Chrome extension that rewrites copied code from shadcn-style docs sites (e.g. ~/ ↔ @/).",
   "author": "blankeos",
   "license": "MIT",

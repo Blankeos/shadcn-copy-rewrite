@@ -1,0 +1,66 @@
+{
+  "manifest_version": 3,
+  "name": "Shadcn Copy Rewrite",
+  "version": "0.1.0",
+  "description": "Rewrite import aliases/paths when copying component code from shadcn-style docs sites.",
+  "homepage_url": "https://github.com/blankeos/shadcn-copy-extension",
+  "action": {
+    "default_title": "Shadcn Copy Rewrite",
+    "default_popup": "index.html"
+  },
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://ui.shadcn.com/*",
+    "https://www.solid-ui.com/*",
+    "https://solid-ui.com/*",
+    "https://www.shadcn-vue.com/*",
+    "https://shadcn-vue.com/*",
+    "https://next.shadcn-vue.com/*",
+    "https://v3.shadcn-vue.com/*",
+    "https://radix.shadcn-vue.com/*",
+    "https://shadcn-solid.com/*",
+    "https://www.shadcn-svelte.com/*",
+    "https://svelte-4.shadcn-svelte.com/*",
+    "https://starwind.dev/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://ui.shadcn.com/*",
+        "https://www.solid-ui.com/*",
+        "https://solid-ui.com/*",
+        "https://www.shadcn-vue.com/*",
+        "https://shadcn-vue.com/*",
+        "https://next.shadcn-vue.com/*",
+        "https://v3.shadcn-vue.com/*",
+        "https://radix.shadcn-vue.com/*",
+        "https://shadcn-solid.com/*",
+        "https://www.shadcn-svelte.com/*",
+        "https://svelte-4.shadcn-svelte.com/*",
+        "https://starwind.dev/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["injected.js"],
+      "matches": [
+        "https://ui.shadcn.com/*",
+        "https://www.solid-ui.com/*",
+        "https://solid-ui.com/*",
+        "https://www.shadcn-vue.com/*",
+        "https://shadcn-vue.com/*",
+        "https://next.shadcn-vue.com/*",
+        "https://v3.shadcn-vue.com/*",
+        "https://radix.shadcn-vue.com/*",
+        "https://shadcn-solid.com/*",
+        "https://www.shadcn-svelte.com/*",
+        "https://svelte-4.shadcn-svelte.com/*",
+        "https://starwind.dev/*"
+      ]
+    }
+  ]
+}
